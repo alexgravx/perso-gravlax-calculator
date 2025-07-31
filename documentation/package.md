@@ -1,15 +1,18 @@
-## Reminder: library vs package vs module in Python
+# Reminder: library vs package vs module in Python
 
 The terminology may be mixed up in everyday language, 
 but the exact correct terminology is:
 - module: a python file with some functionnalities: classes, functions, methods, etc;
-- package: a directory containing a `__init__.py` file and 1+ modules;
-- library: a directory containing a `__init__.py` file, multiple modules AND packages: 1+ packages and 0+ modules; 
+- package: a directory containing modules;
+- library: a directory containing multiple packages and possibly modules;
 
-When you import something with pip, it is either a package or a library, and
+*Notes*: 
+- Packages and libraries used to contain a `__init__.py` file, 
+but it's not necessary anymore in recent versions of Python (3.3+). It is
+however recommended to use and empty file to create a "regular package".
+- When you import something with pip, it is either a package or a library, and
 most of the time a package. A library can be seen as a super-package containing other packages.
-
-The order to remember is: **library > package > sub-package > module**
+- The order to remember is: **library > package > sub-package > module**
 
 ## A concrete example:
 
