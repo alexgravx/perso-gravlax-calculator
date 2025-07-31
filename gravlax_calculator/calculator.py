@@ -1,3 +1,6 @@
+import locale
+locale.setlocale(locale.LC_ALL, 'fr_FR')
+
 # Constant variables
 LEVEL_1 = 11497
 LEVEL_2 = 29315
@@ -26,7 +29,7 @@ def compute_tax(amount):
         raise ValueError("Amount should be greater than 0")
 
 def main():
-    amount = float(input("Enter the amount of revenue:"))
-    IR = compute_tax(amount)
+    amount = float(input("Enter the amount of revenue: "))
+    IR = round(compute_tax(amount))
     TGI = IR/amount
-    print(f"Pour un revenu de {amount}€\n --> {IR}€ d'impôts\n --> taux global d'imposition de {TGI*100:.2f}%")
+    print(f"--> IR:  {IR:n}€\n" + f"--> TGI: {TGI*100:.2f}%")

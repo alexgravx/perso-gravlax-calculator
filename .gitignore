@@ -1,4 +1,10 @@
+# Build files
 dist/
 build/
 *.egg-info/
+
+# Cache
+__pycache__/
+
+# MacOS files
 .DS_Store
