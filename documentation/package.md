@@ -1,56 +1,86 @@
-# Reminder: library vs package vs module in Python
+# Python packages
 
-The terminology may be mixed up in everyday language, 
-but the exact correct terminology is:
-- module: a python file with some functionnalities: classes, functions, methods, etc;
-- package: a directory containing modules;
-- library: a directory containing multiple packages and possibly modules;
+There are some confusions in the terminology. To understand the differences
+between module, package and library, see terminology.md 
 
-*Notes*: 
-- Packages and libraries used to contain a `__init__.py` file, 
-but it's not necessary anymore in recent versions of Python (3.3+). It is
-however recommended to use and empty file to create a "regular package".
-- When you import something with pip, it is either a package or a library, and
-most of the time a package. A library can be seen as a super-package containing other packages.
-- The order to remember is: **library > package > sub-package > module**
+About how to import a Python package, see imports.md
 
-## A concrete example:
+## Regular vs namespace packages
 
-Here is a concrete example:
+Python 3.3+ supports Implicit Namespace Packages that allows it to create a package without an `__init__.py` file. This is called a namespace package in contrast to a regular package which does have an `__init__.py` file (empty or not empty).
+
+However, creating a namespace package should ONLY be done if there is a need for it. For most use cases and developers out there, this doesn't apply so you should stick with EMPTY `__init__.py` files regardless.
+
+### Namespace package usecase
+
+To demonstrate the difference between the two types of python packages, lets look at the following example:
 ```
-.
-├── main.py                     --> script
-└── MyLib                       --> library
-    ├── __init__.py
-    ├── Package1                --> package
-    │   ├── __init__.py
-    │   ├── module1.py          --> module
-    │   └── module2.py          
-    ├── Package2
-    │   ├── __init__.py
-    │   └── module3.py
-    ├── Package3
-    │   ├── __init__.py
-    │   └── module4.py
-    └── some_module.py
+google_pubsub/              <- Package 1
+    google/                 <- Namespace package (there is no __init__.py)
+        cloud/              <- Namespace package (there is no __init__.py)
+            pubsub/         <- Regular package (with __init__.py)
+                __init__.py <- Required to make the package a regular package
+                foo.py
+
+google_storage/             <- Package 2
+    google/                 <- Namespace package (there is no __init__.py)
+        cloud/              <- Namespace package (there is no __init__.py)
+            storage/        <- Regular package (with __init__.py)
+                __init__.py <- Required to make the package a regular package
+                bar.py
 ```
 
-Examples: 
-- matplotlib is a library
-- numpy is a library
+Only skip `__init__.py` files if you want to create namespace packages. Only create namespace packages if you have different libraries that reside in different locations and you want them each to contribute a subpackage to the parent package, i.e. the namespace package.
 
-## Imports in python script
+Keep on adding empty `__init__.py` to your directories because 99% of the time you just want to create regular packages. Also, Python tools out there such as mypy and pytest require empty `__init__.py` files to interpret the code structure accordingly. This can lead to weird errors if not done with care.
 
-The imports work as follow:
+See SO post: https://stackoverflow.com/questions/37139786/is-init-py-not-required-for-packages-in-python-3-3
+
+## Building a regular package
+
+### With setup.py (legacy)
+
 ```
-import MyLib                                --> import library
-from MyLib import Package1                  --> import package
-from MyLib.Package1 import module1          --> import module
-from MyLib.Package1.module1 import main     --> import function
+from setuptools import setup, find_packages
+
+setup(
+    name="gravlax_calculator",                        ---> name of the package
+    version="1.0",
+    packages=find_packages(),                         ---> find subfolders with __init__.py
+    entry_points={                                    ---> creation of a CLI
+        "console_scripts": [
+            "gravlax-calc = calculator:main"
+        ]
+    }
+)
 ```
 
-*Note*: `import <package>` vs `from <package> import <module>`.
-- With `import x` you can refer to thing in x like `x.y`. This form let you rename the import with the keyword `as`.
-- With `from x import y` you can refer to things in x directly like `y`. This form *imports the names directly into the local namespace*, but can also create conflicts, and cannot use `reload()`
+OR
 
-*Note*: This is a common misconception: these syntaxes both always import the whole module. There is also no performance difference between the two approaches. See for example this detailed SO answer: http://softwareengineering.stackexchange.com/questions/187403/import-module-vs-from-module-import-function
+```
+setup(
+    name="gravlax_calculator",                        ---> name of the package
+    version="1.0",
+    py_modules=["calculator"]                         ---> name of the python file at same level of setup.py 
+)
+```
+
+Then launch:
+- `python3 setup.py bdist_wheel` to build the package
+- `pip install ./dist/*.whl` to install the package
+
+### With pyproject.toml
+
+```
+[project]
+name = "gravlax_calculator"
+version = "1.1"
+
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+```
+
+Then launch:
+- `python3 -m build` to build the package
+- `pip install ./dist/*.whl` to install the package

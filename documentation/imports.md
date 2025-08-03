@@ -1,6 +1,6 @@
-## This document discusses ways to import Python packages.
+# This document discusses ways to import Python packages.
 
-### Module name and directory name
+## Module name and directory name
 
 --> The folder_name is DIFFERENT from the module_name in setup.py / pyproject.toml:
 
@@ -15,7 +15,15 @@ Two examples: Pillow and scikit-learn:
  - We install scikit-learn with `pip install scikit-learn` and we import it with `import sklearn`. See the
  github repository here: https://github.com/scikit-learn/scikit-learn
 
-### What is `__init__.py` file ?
+ ## Import syntax
+
+--> `import <package>` vs `from <package> import <module>`:
+- With `import x` you can refer to thing in x like `x.y`. This form let you rename the import with the keyword `as`.
+- With `from x import y` you can refer to things in x directly like `y`. This form *imports the names directly into the local namespace*, but can also create conflicts, and cannot use `reload()`
+
+*Note*: This is a common misconception: these syntaxes both always import the whole module. There is also no performance difference between the two approaches. See for example this detailed SO answer: http://softwareengineering.stackexchange.com/questions/187403/import-module-vs-from-module-import-function
+
+## The `__init__.py` file
 
 The `__init__.py` file is used inside a Python package. But it is not necessary since Python 3.3+ !!
 `__init__.py` initialize the package by running some code the first time the package is imported.
@@ -63,13 +71,10 @@ import gravlax_calculator as calc
 calc.main()
 ```
 
-*Notes*:
-- According to the documentation: "Vous pouvez vous représenter les paquets comme des répertoires dans le système de fichiers et les modules comme des fichiers dans ces répertoires [...]. Comme les répertoires du système de fichiers, les paquets sont organisés de manière hiérarchique et les paquets peuvent eux-mêmes contenir des sous-paquets ou des modules."
-- Link of the documentation about imports: https://docs.python.org/fr/3.13/reference/import.html
+## Basic import without `__init__.py`
 
-### Basic import: what you can do without `__init__.py`
-
-Python can import files and function without the need to use `__init__.py`.
+Python can import files and function without the need to use `__init__.py`,
+through what is called "namespace packages"
 Let's suppose we have the following tree:
 
 ```
@@ -95,7 +100,8 @@ But we cannot do:
 ```
 from package import *
 ```
-To do this, we would need to create a package and add a `__init__.py` file in the package folder.
+To do this, we would need to create a regular package 
+and add a `__init__.py` file in the package folder.
 
 Example of `__init__.py` file:
 ```
@@ -103,3 +109,7 @@ __all__ = ["second", "third"] --> to specify which modules / files to import wit
 from .second import function
 from .third import another_function
 ```
+
+## Documentation
+
+Link of the documentation about imports: https://docs.python.org/fr/3.13/reference/import.html
