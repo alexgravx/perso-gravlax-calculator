@@ -5,14 +5,15 @@ setup:
 		echo "Virtualenv 'gravlax' already exists."; \
 	fi
 	pyenv local gravlax
+	python3 -m pip install --upgrade build
 
 build:
-	python3 setup.py bdist_wheel
+	python3 -m build
 
 install: setup build
 	pip install ./dist/*.whl
 
-info: install
+info:
 	@pip list | grep "gravlax"
 	@pip freeze | grep "gravlax"
 
