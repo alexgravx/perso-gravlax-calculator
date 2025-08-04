@@ -71,11 +71,83 @@ import gravlax_calculator as calc
 calc.main()
 ```
 
+## Relative imports, absolute imports and errors
+
+*Warning*: depending on where you run the code, the import is gonna work differently.
+Here is an example with the following filestructure:
+
+```
+.
+├── main.py
+└── gravlax_calculator
+    ├── __init__.py
+    └── calculator.py
+```
+
+The main file contains:
+```
+from gravlax_calculator import main
+main()
+```
+
+The init file can contain different types of import:
+
+1) Absolute import: `from calculator import main`
+
+Running from the main file raise an *error* because calculator is not 
+accessible from the root of the filestructure described above.
+
+*Note*: to avoid an error, we should use relative import or add the PYTHONPATH variable
+
+2) Relative import: `from .calculator import main`
+
+The relative import means we are looking for the module in the current package.
+We can now run the main file without *errors*. **This is the best option for init file.**
+
+`.` means actual module and `..` means parent module. Thus, we can import another
+submodule from a subpackage with `from ..parent.supackage import submodule`
+
+*Notes*: 
+- Warning: relative import work only in regular package (with init file) !!!
+- We cannot run directly the init file because it doesn't see any other init file, 
+so doesn't know it is in a regular package: "no known parent package".
+We should use absolute import or use `if __name__ == "__main__"`.
+
+## PYTHONPATH variable
+
+The variable PYTHONPATH is an environment variable which you can set to add additional directories where python will look for modules and packages. This variable is not set by default and not needed for Python to work because it it already knows where to find its standard libraries through **system path** (sys.path).
+
+You can look to system path with the following code:
+```
+import sys
+for i in sys.path:
+    print(i)
+```
+
+The PYTHONPATH variable is useful if you want to use absolute imports and you are in a subpackage, 
+to extend the points where Python will look for packages. Here is an example:
+```
+.
+└── MyProject
+    ├── App
+    │   └── app.py   
+    └── Package
+        └── module.py
+```
+
+If we want to import module in `app.py`, we can either:
+- Use relative import with `from ..myproject.package import module`, but this needs to have init files.
+- Use absolute import with `from package import module` (no need to use init files).
+Add the PYTHONPATH with:
+    - `export PYTHONPATH='.'` in MyProject;
+    - `export PYTHONPATH='/Users/.../MyProject'` from anywhere;
+
+You can then look the updated sys.path
+
 ## Basic import without `__init__.py`
 
-Python can import files and function without the need to use `__init__.py`,
-through what is called "namespace packages"
-Let's suppose we have the following tree:
+Python can import files and functions without the need to use `__init__.py`,
+through what is called "namespace packages". Let's suppose we have the following tree:
 
 ```
 .
@@ -109,6 +181,8 @@ __all__ = ["second", "third"] --> to specify which modules / files to import wit
 from .second import function
 from .third import another_function
 ```
+
+*Note*: there is no need to pip install a package to import it if you have the source code alongside. It is however recommended to install and import it properly. We can make an editable import with `pip install -e`
 
 ## Documentation
 

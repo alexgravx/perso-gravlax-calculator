@@ -3,6 +3,12 @@
 This calculator is a tax calculator. You enter your revenue,
 and the package will compute your tax and your imposition rate.
 
+## Quickstart
+
+Run `gravlax-calc`: this will launch an utility CLI with instructions.
+
+## Details
+
 This is a demonstration project 
 for manipulating Python packages and modules.
 

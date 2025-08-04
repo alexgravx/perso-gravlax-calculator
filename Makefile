@@ -17,6 +17,11 @@ info:
 	@pip list | grep "gravlax"
 	@pip freeze | grep "gravlax"
 
+push: install
+	python3 -m pip install --upgrade twine
+	python3 -m twine upload dist/*
+
 clean:
 	pip uninstall -y gravlax-calculator
 	rm -rf ./build/ ./dist/ *.egg-info
+	pip freeze | xargs uninstall -y
