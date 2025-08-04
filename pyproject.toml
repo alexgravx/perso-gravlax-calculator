@@ -1,6 +1,6 @@
 [project]
 name = "gravlax_calculator"
-version = "1.1"
+version = "1.1.1"
 description = "Gravlax calculator, a small tax calculator"
 authors = [
   { name="Alexandre Gravereaux" },

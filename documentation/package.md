@@ -84,3 +84,16 @@ build-backend = "setuptools.build_meta"
 Then launch:
 - `python3 -m build` to build the package
 - `pip install ./dist/*.whl` to install the package
+
+## Uploading a package
+
+Create an account on pypi. 
+You can then upload a package on PyPi with theses commands:
+```
+python3 -m pip install --upgrade twine
+python3 -m twine upload dist/*
+```
+
+## Documentation
+
+More informations here: https://packaging.python.org/en/latest/tutorials/packaging-projects/

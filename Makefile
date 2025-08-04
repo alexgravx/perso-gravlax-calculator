@@ -24,4 +24,4 @@ push: install
 clean:
 	pip uninstall -y gravlax-calculator
 	rm -rf ./build/ ./dist/ *.egg-info
-	pip freeze | xargs uninstall -y
+	pip freeze | xargs pip uninstall -y
